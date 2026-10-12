@@ -1,10 +1,10 @@
-ENRION · Missão 1 "Bouncing 2.0"
+FENRION · Missão 1 "Bouncing 2.0"
 
 Guia para instalar, testar e aprimorar o código da Missão 1 num notebook com Windows, partindo do zero (sem Python instalado).
 
 Siga os passos na ordem. Cada passo termina com um "Deu certo se...": só avance quando ele acontecer. Se travar, veja a seção Problemas comuns.
 
-O que a missão faz
+O que a missão faz :
 
 O drone decola da base central, procura o gabarito (um marcador ArUco dentro de uma forma geométrica), lê o ID do ArUco e procura a base de pouso que tem a mesma forma do gabarito e um número (3, 4 ou 5) que divide exatamente o ID. Depois pousa com precisão sobre ela e desliga os rotores.
 
@@ -34,22 +34,31 @@ alvos_teste_A4.pdf	Alvos para imprimir (gabaritos e bases)
 exemplos/	Imagens para testar a visão
 firmware/	Códigos Arduino da câmera e da ponte de telemetria (referência)
 logs/	Onde ficam os registros de cada missão (.csv)
+
+_____________________//////___________________________________________________________________________
+
 Passo 1 · Instalar o Python
 Acesse python.org, menu Downloads, e baixe o Python 3.12 para Windows (instalador de 64 bits, "Windows installer (64-bit)").
 Abra o instalador. Na primeira tela, marque a caixa "Add python.exe to PATH" (fica embaixo, é fácil passar despercebida).
 Clique em Install Now e espere terminar.
-Para conferir: tecla Windows, digite cmd, Enter. No Prompt de Comando, digite:
+Para conferir: 
+tecla Windows, digite cmd, Enter. No Prompt de Comando, digite:
    py --version
 
 Deu certo se aparecer Python 3.12.x.
 
 Se aparecer uma mensagem sugerindo a Microsoft Store, desligue os atalhos em Configurações > Aplicativos > Configurações avançadas de aplicativos > Aliases de execução de aplicativo (desative python.exe e python3.exe) e feche e abra o Prompt de Comando.
 
+_____________________//////___________________________________________________________________________
+
 Passo 2 · Copiar a pasta do projeto
 
 Copie a pasta inteira FENRION_M1 para C:\FENRION_M1.
 
 Evite a Área de Trabalho, Documentos ou qualquer pasta dentro do OneDrive: a sincronização costuma travar o ambiente virtual. Evite também nomes de pasta com acento.
+
+
+_____________________//////___________________________________________________________________________
 
 Passo 3 · Instalar as bibliotecas
 
@@ -58,6 +67,8 @@ Dê dois cliques em 0_instalar.bat. Ele cria um ambiente isolado na pasta .venv 
 Deu certo se terminar com OpenCV x.x.x - tudo OK e INSTALACAO CONCLUIDA.
 
 Se o Windows mostrar "O Windows protegeu o computador", clique em Mais informações > Executar assim mesmo. Os .bat são arquivos de texto simples; você pode abri-los no Bloco de Notas para conferir o que fazem.
+_____________________//////___________________________________________________________________________
+
 
 Passo 4 · Testar a visão com imagens prontas
 
@@ -70,6 +81,9 @@ amarelo: as bases reconhecidas, com forma e número;
 verde: a base correta, com uma linha saindo do centro da imagem.
 
 Deu certo se a figura do regulamento mostrar ID 25 | gabarito hexagono | ... | POUSAR: hexagono 5 no topo.
+
+
+_____________________//////___________________________________________________________________________
 
 Passo 5 · Rodar a missão no simulador próprio
 
@@ -88,6 +102,8 @@ Resposta esperada: ('hexagono', 3); distancia ate o centro dela: 2 cm
 
 Cada missão gera um arquivo em logs/ (abre no Excel; separador ;) com tempo, estado, posição, altura e mensagens.
 
+_____________________//////___________________________________________________________________________
+
 Passo 6 · Teste em lote (use sempre que mudar o código)
 
 Dê dois cliques em 3_teste_em_lote.bat e aperte Enter duas vezes (arenas 1 a 10). Cada arena leva cerca de 15 segundos.
@@ -95,6 +111,8 @@ Dê dois cliques em 3_teste_em_lote.bat e aperte Enter duas vezes (arenas 1 a 10
 Deu certo se terminar com RESULTADO: 10/10 pousos corretos (100%).
 
 Este é o seu termômetro. A regra da equipe é: rode o lote antes de mexer no código (anote o resultado), faça a mudança e rode o lote de novo. A mudança só entra se o resultado ficar igual ou melhor. Para um teste mais exigente, use as arenas 1 a 30.
+
+_____________________//////___________________________________________________________________________
 
 Passo 7 · Visão com a câmera real (bancada)
 Imprima o alvos_teste_A4.pdf e espalhe as folhas no chão. Deixe um gabarito visível por vez, como na arena.
@@ -108,6 +126,9 @@ Para o vídeo ficar fluido, deixe a câmera em VGA ou SVGA, abrindo no navegador
 
 Deu certo se, segurando a câmera a 1 a 3 m de altura, a base correta aparecer em verde.
 
+
+_____________________//////___________________________________________________________________________
+
 Passo 8 · Missão no SITL do Mission Planner (opcional)
 
 O SITL roda o firmware real do ArduPilot no computador. É o teste mais próximo do voo de verdade, porque usa o mesmo protocolo e os mesmos modos de voo do drone.
@@ -119,6 +140,8 @@ Dê dois cliques em 5_missao_sitl.bat e aperte Enter (porta 5762).
 A câmera continua virtual (arena desenhada), mas o voo é do ArduPilot. O Mission Planner continua mostrando o drone no mapa durante a missão.
 
 Deu certo se o drone decolar no Mission Planner, percorrer a arena e pousar. Se não conectar, tente a porta 5763.
+
+_____________________//////___________________________________________________________________________
 
 Passo 9 · Drone real
 
