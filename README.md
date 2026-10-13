@@ -226,7 +226,56 @@ SITL: não conecta	Tente a porta 5763 no 5_missao_sitl.bat
 Real: fica conectando e não passa	Mission Planner aberto (feche) ou ESP8266 fora da rede
 Real: Nao armou	Veja as linhas [Pixhawk] no console: são os motivos do pré-arm
 Segurança
+
 Nunca rode o modo real sozinho. Sempre com piloto de segurança no rádio, pronto para trocar o modo.
 Hélices conferidas, bateria carregada e área livre de pessoas antes de digitar VOAR.
 Primeiro voo de cada mudança no código: sempre no simulador e no teste em lote antes.
 Em qualquer comportamento estranho: piloto assume no rádio, depois analise o arquivo de logs/.
+
+
+
+Atualização 1..................
+O controle fica em três camadas: o piloto pelo rádio, a Pixhawk sozinha quando perde o computador, e o próprio programa quando perde a câmera. 
+
+1. O piloto assume pelo rádio (sempre funciona)
+
+O rádio fala direto com a Pixhawk, sem passar pelo computador nem pelo Wi-Fi. A qualquer momento, o piloto muda a chave de modos (para AltHold ou Loiter) e a Pixhawk sai do GUIDED na hora. O programa não consegue impedir isso.
+
+Um detalhe importante: a Pixhawk só reage quando a chave muda de posição. Antes da missão, deixe a chave em Loiter. O programa coloca o drone em GUIDED, e para assumir o piloto passa a chave para AltHold, uma posição diferente. Se ele tentar “voltar” para Loiter com a chave já em Loiter, nada acontece. Treinem isso em voo antes da missão.
+
+2. Se o computador sumir (Wi-Fi caiu, programa travou ou fechou)
+Na hora: no GUIDED, se a Pixhawk ficar 3 segundos sem receber comando de velocidade, ela para e fica pairando. É um comportamento padrão do ArduPilot.
+Depois de alguns segundos: entra o failsafe de GCS, que pousa o drone. Esse failsafe se baseia no heartbeat, o sinal de “estou vivo” que a estação de solo envia uma vez por segundo.
+
+A primeira falha estava aqui: o programa da missão não enviava esse heartbeat. Pelo que sei do ArduPilot, sem nunca ter recebido um heartbeat ele não arma esse failsafe, então o drone ficaria pairando até a bateria acabar. Agora o programa envia o heartbeat dentro do laço principal. Assim, se o programa travar, o heartbeat para junto e a Pixhawk pousa.
+
+Parâmetros para configurar na Pixhawk:
+
+Parâmetro	Valor	Efeito
+FS_GCS_ENABLE	5	Perdeu o computador: pousa (sem GPS, o RTL não é confiável)
+FS_GCS_TIMEOUT	3	Segundos sem heartbeat até acionar (se existir na sua versão)
+FS_OPTIONS	16	Se o piloto já assumiu (Loiter/AltHold), perder o computador não interrompe o controle dele
+FS_THR_ENABLE	3	Perdeu o rádio: pousa
+
+3. Se a câmera parar (o programa decide)
+
+A segunda falha: se o vídeo travasse, o programa continuava usando a última imagem, congelada, e podia “alinhar” o drone com uma foto velha. Agora imagens com mais de 0,5 s são descartadas, e se a câmera ficar 3 s sem imagem nova durante o voo, o programa manda pousar onde está.
+
+Como testar sem risco
+Sem hélices, rode a missão em modo real, deixe o drone armar e feche a janela do programa. Em poucos segundos deve aparecer no Mission Planner (ou no log) a mensagem de failsafe de GCS e o modo LAND.
+Repita desligando a câmera: o console deve mostrar “camera sem imagem ha 3 s: pousando”.
+Teste a retomada pelo piloto: com o programa rodando, mude a chave para AltHold e confira se o modo muda na hora.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
